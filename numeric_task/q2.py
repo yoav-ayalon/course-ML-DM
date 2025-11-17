@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 from sklearn.ensemble import RandomForestClassifier 
 from sklearn.metrics import accuracy_score
@@ -517,15 +518,28 @@ def analyze_learning_curve(X_train, y_train, X_val, y_val, model_config, model_t
     }
 
 
-def plot_learning_curves(rf_results, nn_results, output_path=None):
+def plot_learning_curves(rf_results, nn_results, output_dir=None):
     """Plot learning curves for both Random Forest and Neural Network.
     
     Args:
         rf_results: Results dict from analyze_learning_curve for RF
         nn_results: Results dict from analyze_learning_curve for NN
-        output_path: Path to save the figure (optional)
+        output_dir: Directory to save the figure (optional). If not specified, uses default plots directory.
     """
     plt.switch_backend('Agg')  # Use non-interactive backend
+    
+    # Create output directory if not specified
+    if output_dir is None:
+        output_dir = Path(__file__).resolve().parent / "plot_outputs"
+    else:
+        output_dir = Path(output_dir)
+    
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Generate filename with timestamp for tracking different runs
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_path = output_dir / f"learning_curves_{timestamp}.png"
+    
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
     
     # Random Forest
@@ -538,7 +552,7 @@ def plot_learning_curves(rf_results, nn_results, output_path=None):
     axes[0].set_title('Random Forest - Learning Curve', fontsize=13, fontweight='bold')
     axes[0].legend(fontsize=11)
     axes[0].grid(True, alpha=0.3)
-    axes[0].set_ylim([0.85, 1.05])
+    axes[0].set_ylim([0, 1.1])
     
     # Neural Network
     axes[1].plot(nn_results["train_sizes"], nn_results["train_accuracies"], 
@@ -550,13 +564,12 @@ def plot_learning_curves(rf_results, nn_results, output_path=None):
     axes[1].set_title('Neural Network - Learning Curve', fontsize=13, fontweight='bold')
     axes[1].legend(fontsize=11)
     axes[1].grid(True, alpha=0.3)
-    axes[1].set_ylim([0.85, 1.05])
+    axes[1].set_ylim([0, 1.1])
     
     plt.tight_layout()
     
-    if output_path:
-        plt.savefig(output_path, dpi=150, bbox_inches='tight')
-        print(f"\nFigure saved to: {output_path}")
+    plt.savefig(output_path, dpi=150, bbox_inches='tight')
+    print(f"\nFigure saved to: {output_path}")
     
     return fig
 
@@ -617,9 +630,8 @@ def activate():
         random_state=RNG)
     
     # Plot learning curves
-    output_dir = Path(__file__).resolve().parent
-    plot_output = output_dir / "learning_curves.png"
-    plot_learning_curves(rf_learning_results, nn_learning_results, output_path=str(plot_output))
+    output_dir = Path(__file__).resolve().parent / "plot_outputs"
+    plot_learning_curves(rf_learning_results, nn_learning_results, output_dir=str(output_dir))
 
     return {
         "dataset": df,
