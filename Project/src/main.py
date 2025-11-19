@@ -15,27 +15,27 @@ def load_data(file_path):
     """Load data from a CSV file into a pandas DataFrame."""
     return pd.read_csv(file_path)
 
+def plotting(data):
+    # plotter.histogram(data,"ANNUAL_MILEAGE")
+    # plotter.histogeam_by_var(data, var="ANNUAL_MILEAGE", hue="OUTCOME")
+    # plotter.histogram_by_outcome(data, column="ANNUAL_MILEAGE")
+    plotter.bar_by_outcome(data, column="ANNUAL_MILEAGE")
+    pass
+
 
 
 
 def activate():
     print(f"Loading data from: {raw_data}")
     data = load_data(raw_data)
-    pd.set_option('display.max_columns', None)
-    pd.set_option('display.width', None)
+
     # print(data.head())
     # print(data.describe())
     # print(data.info())
     # print(data.dtypes)
     print(data.columns)
 
-    plotter.histogeam_by_var(data, var="INCOME", hue="AGE")
-    plotter.histogeam_by_var(data, var="CREDIT_SCORE", hue="INCOME")
-
-    # plotter.histogram(data, column="CREDIT_SCORE", bins=20, title="Credit Score Distribution", xlabel="Credit Score")
-    # plotter.histogram(data, column="SPEEDING_VIOLATIONS", title="Histogram of Speeding Violations", xlabel="Speeding Violations")
-    # plotter.histogram(data, column="DUIS", title="Histogram of DUIs", xlabel="DUIs")
-    # plotter.histogram(data, column="PAST_ACCIDENTS", title="Histogram of Past Accidents", xlabel="Past Accidents")
+    plotting(data)
 
 
 
